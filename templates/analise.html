@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="analysis-header">
+    <h2>Análise Fundamentalista: {{ data.name }} ({{ ticker }})</h2>
+    <span class="badge">{{ data.sector }}</span>
+</div>
+
+<div class="grid-container">
+    <div class="card">
+        <h3>Preço Atual</h3>
+        <div class="value">R$ {{ "%.2f"|format(data.price) }}</div>
+    </div>
+
+
+    <div class="card {% if upside > 0 %}highlight-green{% else %}highlight-red{% endif %}">
+        <h3>Preço Justo (Graham)</h3>
+        <div class="value">R$ {{ "%.2f"|format(graham_price) }}</div>
+        <p>Potencial: <strong>{{ "%.2f"|format(upside) }}%</strong></p>
+    </div>
+
+    <div class="card">
+        <h3>Graham (Patrimonial)</h3>
+        <div class="value">R$ {{ "%.2f"|format(graham_price) }}</div>
+        <small>Focado em Ativos e Lucro Passado</small>
+    </div>
+
+    <div class="card {% if dcf_price > data.price %}highlight-green{% else %}highlight-red{% endif %}">
+        <h3>DCF (Fluxo de Caixa)</h3>
+        <div class="value">
+            {% if dcf_price > 0 %}
+                R$ {{ "%.2f"|format(dcf_price) }}
+            {% else %}
+                <span style="font-size: 1rem; color: #999;">N/A (FCF Negativo)</span>
+            {% endif %}
+        </div>
+        <small>Projeção de Futuro (Cresc. 8%)</small>
+    </div>
+
+    <div class="card">
+        <h3>P/L (Preço/Lucro)</h3>
+        <div class="value">{{ "%.2f"|format(data.pe_ratio) }}</div>
+        <small>Ideal: Abaixo de 15</small>
+    </div>
+
+    <div class="card">
+        <h3>P/VP (Preço/Valor Patr.)</h3>
+        <div class="value">{{ "%.2f"|format(data.pb_ratio) }}</div>
+        <small>Ideal: Abaixo de 1.5</small>
+    </div>
+
+    <div class="card">
+        <h3>ROE (Rentabilidade)</h3>
+        <div class="value">{{ "%.2f"|format(data.roe) }}%</div>
+        <small>Quanto maior, melhor</small>
+    </div>
+
+    <div class="card">
+        <h3>Dividend Yield</h3>
+        <div class="value">{{ "%.2f"|format(data.dividend_yield) }}%</div>
+    </div>
+</div>
+
+<div class="actions" style="margin-top: 20px;">
+    <a href="{{ url_for('main.dashboard') }}" class="btn-secondary">Voltar</a>
+</div>
+{% endblock %}

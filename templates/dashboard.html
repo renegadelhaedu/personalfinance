@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h1>Minha Carteira, {{ current_user.username }}</h1>
+    <button id="openModal" class="btn-primary" style="width: auto;">+ Adicionar Ação</button>
+</div>
+
+<table class="stock-table">
+    <thead>
+        <tr>
+            <th>Ticker</th>
+            <th>Quantidade</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for stock in stocks %}
+        <tr>
+            <td><strong>{{ stock.ticker }}</strong></td>
+            <td>{{ stock.quantity }}</td>
+            <td>
+                <button class="btn-edit"
+                        data-id="{{ stock.id }}"
+                        data-ticker="{{ stock.ticker }}"
+                        data-quantity="{{ stock.quantity }}">
+                    Editar
+                </button>
+                |
+                <a href="{{ url_for('main.delete_stock', stock_id=stock.id) }}" class="text-danger">Excluir</a>
+                |
+                <a href="{{ url_for('main.analysis', ticker=stock.ticker) }}" class="btn-analyze" title="Análise Fundamentalista"> 📊 Analisar</a>
+
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="5">Nenhuma ação cadastrada.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div id="stockModal" class="modal">
+    <div class="modal-content">
+        <h3>Adicionar Ação</h3>
+
+        <form action="/main/stock/add" method="POST">
+            <label style="font-size: 0.9rem; color: #666; margin-bottom: 5px; display:block;">Ticker (Código)</label>
+            <input type="text" name="ticker" placeholder="Ex: PETR4, AAPL" required autocomplete="off">
+
+            <label style="font-size: 0.9rem; color: #666; margin-bottom: 5px; display:block;">Quantidade</label>
+            <input type="number" name="quantity" placeholder="Ex: 100" required>
+
+            <div class="modal-actions">
+                <button type="button" id="closeModal" class="btn-secondary">Cancelar</button>
+                <button type="submit" class="btn-primary">Salvar Ação</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <h3>Editar Posição</h3>
+
+        <form id="editForm" method="POST">
+
+            <label style="font-size: 0.9rem; color: #666; margin-bottom: 5px; display:block;">Ticker</label>
+            <input type="text" id="editTicker" disabled style="background-color: #e9ecef;">
+
+            <label style="font-size: 0.9rem; color: #666; margin-bottom: 5px; display:block;">Quantidade</label>
+            <input type="number" name="quantity" id="editQuantity" required>
+
+            <div class="modal-actions">
+                <button type="button" id="closeEditModal" class="btn-secondary">Cancelar</button>
+                <button type="submit" class="btn-primary">Atualizar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
